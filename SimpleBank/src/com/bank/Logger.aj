@@ -4,13 +4,16 @@ import java.io.*;
 import java.util.*;
 
 public aspect Logger {
+	Calendar cal;
 	File file = new File("log.txt");
-    Calendar cal = Calendar.getInstance();
-    //Aspecto: Deben hacer los puntos de cortes (pointcut) para crear un log con los tipos de transacciones realizadas.
-    pointcut success() : call(* moneyMakeTransaction());
-    after() : success() {
+	
+	pointcut transaccion() : execution(* money*(..));
+    
+    
+    after() : transaccion() {
     	try {
-        	ArrayList<String> lista = new ArrayList<>();
+    		cal = Calendar.getInstance();
+    		ArrayList<String> lista = new ArrayList<>();
         	if(!file.exists()) file.createNewFile();
         	else {
         		BufferedReader wr = new BufferedReader(new FileReader("log.txt"));
@@ -20,13 +23,14 @@ public aspect Logger {
             	}
             	wr.close();
         	}
-        	lista.add("Depósito de dinero :"+cal.getTime().toString());
+        	if("void com.bank.Bank.moneyMakeTransaction()".equals(thisJoinPoint.getSignature().toString())) lista.add("Depósito de dinero :"+cal.getTime().toString());
+        	else if("void com.bank.Bank.moneyWithdrawal()".equals(thisJoinPoint.getSignature().toString())) lista.add("Retiro de dinero :"+cal.getTime().toString());
         	BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			for(String str: lista) bw.write(str+"\n");
 			bw.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	System.out.println("**** User created ****");
+    	System.out.println("**** Transacción realizada ****");
     }
 }
