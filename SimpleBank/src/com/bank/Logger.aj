@@ -6,11 +6,11 @@ import java.util.*;
 public aspect Logger {
 	Calendar cal;
 	File file = new File("log.txt");
-	
 	pointcut transaccion() : execution(* money*(..));
     
     
     after() : transaccion() {
+
     	try {
     		cal = Calendar.getInstance();
     		ArrayList<String> lista = new ArrayList<>();
