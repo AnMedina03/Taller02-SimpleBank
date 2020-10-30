@@ -33,4 +33,5 @@ public aspect Logger {
 		}
     	System.out.println("**** Transacción realizada ****");
     }
+    
 }
